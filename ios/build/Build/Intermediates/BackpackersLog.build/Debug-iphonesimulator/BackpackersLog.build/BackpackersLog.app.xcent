@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>application-identifier</key>
+	<string>48A4QT3C4A.org.reactjs.native.example.BackpackersLog</string>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>48A4QT3C4A.org.reactjs.native.example.BackpackersLog</string>
+	</array>
+</dict>
+</plist>
