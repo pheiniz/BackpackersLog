@@ -4,6 +4,8 @@ import {StyleSheet, Text, TextInput, View} from 'react-native';
 import MapComponent from '../Components/MapComponent.js';
 import RoundedButton from '../Components/RoundedButton.js';
 
+import {LoginButton, AccessToken} from 'react-native-fbsdk';
+
 class LocationInputScreen extends Component {
   render() {
     return (
@@ -18,6 +20,24 @@ class LocationInputScreen extends Component {
             text='SEND'
             onPress={() => window.alert('Rounded Button Pressed!')}
           />
+          <LoginButton
+          publishPermissions={["publish_actions"]}
+          onLoginFinished={
+            (error, result) => {
+              if (error) {
+                alert("login has error: " + result.error);
+              } else if (result.isCancelled) {
+                alert("login is cancelled.");
+              } else {
+                AccessToken.getCurrentAccessToken().then(
+                  (data) => {
+                    alert(data.accessToken.toString())
+                  }
+                )
+              }
+            }
+          }
+          onLogoutFinished={() => alert("logout.")}/>
       </View>
     );
   }
