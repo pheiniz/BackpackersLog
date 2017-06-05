@@ -1,36 +1,23 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+import React, {Component} from 'react';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 
-import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View
-} from 'react-native';
+import MapComponent from '../Components/MapComponent.js';
+import RoundedButton from '../Components/RoundedButton.js';
 
 class LocationInputScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
+        <MapComponent></MapComponent>
         <TextInput style={styles.textInput}
-          placeholder="Test"
+          placeholder="Been there"
           returnKeyType="search"
           enablesReturnKeyAutomatically={true}
           onChangeText={ (text) => console.log(text) }/>
+          <RoundedButton
+            text='SEND'
+            onPress={() => window.alert('Rounded Button Pressed!')}
+          />
       </View>
     );
   }
@@ -41,25 +28,15 @@ export default LocationInputScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCF0',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    backgroundColor: 'rgba(255,255,155,0.7)'
   },
   textInput: {
     height: 30,
-    marginLeft: 50,
-    marginRight: 50,
+    marginHorizontal: 50,
     padding: 8,
     borderWidth: 0.5,
+    borderRadius: 5,
+    backgroundColor: 'rgba(255,255,255,0.7)',
   },
 });
