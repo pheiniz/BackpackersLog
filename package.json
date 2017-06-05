@@ -10,6 +10,7 @@
 		"firebase": "^4.1.1",
 		"react": "16.0.0-alpha.6",
 		"react-native": "0.44.2",
+		"react-native-fbsdk": "^0.6.0",
 		"react-native-geocoder": "^0.4.8",
 		"react-native-maps": "^0.15.2"
 	},
