@@ -5,6 +5,10 @@ import MapComponent from '../Components/MapComponent.js';
 import RoundedButton from '../Components/RoundedButton.js';
 
 import {LoginButton, AccessToken} from 'react-native-fbsdk';
+import Firebase from '../Config/Firebase.js'
+
+const auth = Firebase.auth();
+const provider = Firebase.auth.FacebookAuthProvider;
 
 class LocationInputScreen extends Component {
   render() {
@@ -30,8 +34,10 @@ class LocationInputScreen extends Component {
                 alert("login is cancelled.");
               } else {
                 AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                    alert(data.accessToken.toString())
+                  (accessTokenData) => {
+                    alert(accessTokenData.accessToken.toString())
+                    const credential = provider.credential(accessTokenData.accessToken);
+                    auth.signInWithCredential(credential);
                   }
                 )
               }
