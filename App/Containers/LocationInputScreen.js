@@ -3,12 +3,7 @@ import {StyleSheet, Text, TextInput, View} from 'react-native';
 
 import MapComponent from '../Components/MapComponent.js';
 import RoundedButton from '../Components/RoundedButton.js';
-
-import {LoginButton, AccessToken} from 'react-native-fbsdk';
-import Firebase from '../Config/Firebase.js'
-
-const auth = Firebase.auth();
-const provider = Firebase.auth.FacebookAuthProvider;
+import FBLoginButton from '../Components/FBLoginButton.js';
 
 class LocationInputScreen extends Component {
   render() {
@@ -24,26 +19,7 @@ class LocationInputScreen extends Component {
             text='SEND'
             onPress={() => window.alert('Rounded Button Pressed!')}
           />
-          <LoginButton
-          publishPermissions={["publish_actions"]}
-          onLoginFinished={
-            (error, result) => {
-              if (error) {
-                alert("login has error: " + result.error);
-              } else if (result.isCancelled) {
-                alert("login is cancelled.");
-              } else {
-                AccessToken.getCurrentAccessToken().then(
-                  (accessTokenData) => {
-                    alert(accessTokenData.accessToken.toString())
-                    const credential = provider.credential(accessTokenData.accessToken);
-                    auth.signInWithCredential(credential);
-                  }
-                )
-              }
-            }
-          }
-          onLogoutFinished={() => alert("logout.")}/>
+        <FBLoginButton/>
       </View>
     );
   }
