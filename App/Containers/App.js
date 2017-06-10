@@ -1,11 +1,11 @@
 //import '../Config'
-import React, {Component} from 'react'
+import React, { Component } from "react";
 //import { Provider } from 'react-redux'
-import LocationInputScreen from './LocationInputScreen.js'
+import LocationInputScreen from "./LocationInputScreen.js";
 //import RootContainer from './RootContainer'
 //import createStore from '../Redux'
 
-import {NavigatorIOS, StyleSheet} from 'react-native';
+import { NavigatorIOS, StyleSheet } from "react-native";
 
 // create our store
 //const store = createStore()
@@ -21,11 +21,16 @@ import {NavigatorIOS, StyleSheet} from 'react-native';
  */
 class App extends Component {
   render() {
-    return (<NavigatorIOS style={styles.navContainer} initialRoute={{
-      component: LocationInputScreen,
-      title: 'LocationInputScreen',
-      navigationBarHidden: true
-    }}/>)
+    return (
+      <NavigatorIOS
+        style={styles.navContainer}
+        initialRoute={{
+          component: LocationInputScreen,
+          title: "LocationInputScreen",
+          navigationBarHidden: true
+        }}
+      />
+    );
   }
 }
 
@@ -33,6 +38,6 @@ var styles = StyleSheet.create({
   navContainer: {
     flex: 1
   }
-})
+});
 
-export default App
+export default App;
