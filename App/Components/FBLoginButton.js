@@ -1,12 +1,17 @@
-import React, { Component } from "react";
+import React, { Component, PropTypes } from "react";
 
 import { LoginButton, AccessToken } from "react-native-fbsdk";
 import Firebase from "../Config/Firebase.js";
-
-const auth = Firebase.auth();
-const provider = Firebase.auth.FacebookAuthProvider;
+//
+// const auth = Firebase.auth();
+// const provider = Firebase.auth.FacebookAuthProvider;
 
 class FBLoginButton extends Component {
+  static propTypes = {
+    onLoginFinished: PropTypes.func,
+    onLogoutFinished: PropTypes.func
+  };
+
   render() {
     return (
       <LoginButton
@@ -17,16 +22,10 @@ class FBLoginButton extends Component {
           } else if (result.isCancelled) {
             alert("login is cancelled.");
           } else {
-            AccessToken.getCurrentAccessToken().then(accessTokenData => {
-              alert(accessTokenData.accessToken.toString());
-              const credential = provider.credential(
-                accessTokenData.accessToken
-              );
-              auth.signInWithCredential(credential);
-            });
+            this.props.onLoginFinished();
           }
         }}
-        onLogoutFinished={() => alert("logout.")}
+        onLogoutFinished={() => this.props.onLogoutFinished()}
       />
     );
   }

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import LocationInputScreen from "./LocationInputScreen.js";
+import LoginScreen from "./LoginScreen.js";
 import { NavigatorIOS, StyleSheet } from "react-native";
 
 import { connect } from "react-redux";
@@ -18,7 +19,8 @@ class AppContainer extends Component {
     //     }}
     //   />
     // );
-    return <LocationInputScreen {...this.props} />;
+    // return <LocationInputScreen {...this.props} />;
+    return <LoginScreen {...this.props} />;
   }
 }
 

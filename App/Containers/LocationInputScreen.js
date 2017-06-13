@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 
 import MapComponent from "../Components/MapComponent.js";
 import RoundedButton from "../Components/RoundedButton.js";
-import FBLoginButton from "../Components/FBLoginButton.js";
 
 class LocationInputScreen extends Component {
   addMarker() {
@@ -28,13 +27,12 @@ class LocationInputScreen extends Component {
             this.addMarker();
           }}
         />
-        <FBLoginButton />
       </View>
     );
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   return {
     savedMarkers: state.savedMarkers
   };
