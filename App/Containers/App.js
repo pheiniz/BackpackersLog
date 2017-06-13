@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import AppContainer from "./AppContainer.js";
 import Map from "../Components/MapComponent.js";
+import Spinner from "../Components/Spinner.js";
 
 import { createStore, applyMiddleware, compose } from "redux";
 import { Provider, connect } from "react-redux";
 import thunkMiddleware from "redux-thunk";
 import { createLogger } from "redux-logger";
 import reducer from "../reducers";
+
+import Firebase from "../Config/Firebase.js";
 
 const loggerMiddleware = createLogger({
   predicate: (getState, action) => __DEV__
@@ -43,20 +46,30 @@ const store = configureStore({});
 //   }
 // }
 
-// const LoginOrMap = connect(state => ({
-//   isAuthenticated: state.user.isAuthenticated
-// }))(({ isAuthenticated }) => {
-//   if (isAuthenticated) {
-//     return <Map />;
-//   } else {
-//     return <AppContainer />;
-//   }
-// });
+class App extends Component {
+  constructor(props) {
+    super(props);
 
-const App = () =>
-  <Provider store={store}>
-    {/* <LoginOrMap /> */}
-    <AppContainer />
-  </Provider>;
+    this.state = { loaded: false };
+  }
+
+  componentWillMount() {
+    Firebase.auth().onAuthStateChanged(user => {
+      this.setState({ loaded: true });
+
+      // if (user) {
+      //   store.dispatch({ type: SIGN_IN_SUCCESS, payload: user });
+      // }
+    });
+  }
+
+  render() {
+    return (
+      <Provider store={store}>
+        {this.state.loaded ? <AppContainer /> : <Spinner />}
+      </Provider>
+    );
+  }
+}
 
 export default App;
