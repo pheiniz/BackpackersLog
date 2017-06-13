@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
+import { connect } from "react-redux";
 
 import MapComponent from "../Components/MapComponent.js";
 import RoundedButton from "../Components/RoundedButton.js";
 import FBLoginButton from "../Components/FBLoginButton.js";
 
 class LocationInputScreen extends Component {
+  addMarker() {
+    this.props.fetchMarkers();
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -19,7 +24,9 @@ class LocationInputScreen extends Component {
         />
         <RoundedButton
           text="SEND"
-          onPress={() => window.alert("Rounded Button Pressed!")}
+          onPress={() => {
+            this.addMarker();
+          }}
         />
         <FBLoginButton />
       </View>
@@ -27,7 +34,13 @@ class LocationInputScreen extends Component {
   }
 }
 
-export default LocationInputScreen;
+function mapStateToProps(state, ownProps) {
+  return {
+    savedMarkers: state.savedMarkers
+  };
+}
+
+export default connect(mapStateToProps)(LocationInputScreen);
 
 const styles = StyleSheet.create({
   container: {

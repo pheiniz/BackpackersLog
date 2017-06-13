@@ -1,14 +1,28 @@
-//import '../Config'
 import React, { Component } from "react";
-//import { Provider } from 'react-redux'
-import LocationInputScreen from "./LocationInputScreen.js";
-//import RootContainer from './RootContainer'
-//import createStore from '../Redux'
+import AppContainer from "./AppContainer.js";
+import Map from "../Components/MapComponent.js";
 
-import { NavigatorIOS, StyleSheet } from "react-native";
+import { createStore, applyMiddleware, compose } from "redux";
+import { Provider, connect } from "react-redux";
+import thunkMiddleware from "redux-thunk";
+import { createLogger } from "redux-logger";
+import reducer from "../reducers";
 
-// create our store
-//const store = createStore()
+const loggerMiddleware = createLogger({
+  predicate: (getState, action) => __DEV__
+});
+
+function configureStore(initialState) {
+  const enhancer = compose(
+    applyMiddleware(
+      thunkMiddleware, // lets us dispatch() functions
+      loggerMiddleware
+    )
+  );
+  return createStore(reducer, initialState, enhancer);
+}
+
+const store = configureStore({});
 
 /**
  * Provides an entry point into our application.  Both index.ios.js and index.android.js
@@ -19,25 +33,30 @@ import { NavigatorIOS, StyleSheet } from "react-native";
  *
  * We separate like this to play nice with React Native's hot reloading.
  */
-class App extends Component {
-  render() {
-    return (
-      <NavigatorIOS
-        style={styles.navContainer}
-        initialRoute={{
-          component: LocationInputScreen,
-          title: "LocationInputScreen",
-          navigationBarHidden: true
-        }}
-      />
-    );
-  }
-}
+// class App extends Component {
+//   render() {
+//     return (
+//       <Provider store={store}>
+//         <AppContainer />
+//       </Provider>
+//     );
+//   }
+// }
 
-var styles = StyleSheet.create({
-  navContainer: {
-    flex: 1
-  }
-});
+// const LoginOrMap = connect(state => ({
+//   isAuthenticated: state.user.isAuthenticated
+// }))(({ isAuthenticated }) => {
+//   if (isAuthenticated) {
+//     return <Map />;
+//   } else {
+//     return <AppContainer />;
+//   }
+// });
+
+const App = () =>
+  <Provider store={store}>
+    {/* <LoginOrMap /> */}
+    <AppContainer />
+  </Provider>;
 
 export default App;
