@@ -1,34 +1,38 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 
 import { AccessToken } from "react-native-fbsdk";
-import Firebase from "../Config/Firebase.js";
 
 import FBLoginButton from "../Components/FBLoginButton.js";
+import LocationInputScreen from "./LocationInputScreen.js";
 
-class LocationInputScreen extends Component {
+class LoginScreen extends Component {
   onLoginFinished() {
-    const auth = Firebase.auth();
-    const provider = Firebase.auth.FacebookAuthProvider;
-
     AccessToken.getCurrentAccessToken().then(accessTokenData => {
-      alert(accessTokenData.accessToken.toString());
-      const credential = provider.credential(accessTokenData.accessToken);
-      auth.signInWithCredential(credential);
+      //alert(accessTokenData.accessToken.toString());
+      this.props.signInUser(accessTokenData);
     });
   }
 
   onLogoutFinished() {
-    alert("logout!");
+    this.props.signOutUser();
   }
 
   render() {
+    if (this.props.authState.user != null) {
+      return <LocationInputScreen {...this.props} />;
+    }
+
     return (
       <View style={styles.container}>
         <FBLoginButton
-          onLoginFinished={this.onLoginFinished}
-          onLogoutFinished={this.onLogoutFinished}
+          onLoginFinished={() => {
+            this.onLoginFinished();
+          }}
+          onLogoutFinished={() => {
+            this.onLogoutFinished();
+          }}
         />
       </View>
     );
@@ -37,11 +41,11 @@ class LocationInputScreen extends Component {
 
 function mapStateToProps(state) {
   return {
-    savedMarkers: state.savedMarkers
+    authState: state.authState
   };
 }
 
-export default connect(mapStateToProps)(LocationInputScreen);
+export default connect(mapStateToProps)(LoginScreen);
 
 const styles = StyleSheet.create({
   container: {

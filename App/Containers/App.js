@@ -36,15 +36,6 @@ const store = configureStore({});
  *
  * We separate like this to play nice with React Native's hot reloading.
  */
-// class App extends Component {
-//   render() {
-//     return (
-//       <Provider store={store}>
-//         <AppContainer />
-//       </Provider>
-//     );
-//   }
-// }
 
 class App extends Component {
   constructor(props) {
