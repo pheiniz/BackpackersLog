@@ -13,8 +13,9 @@ export function fetchMarkers() {
   };
 }
 
-export function addMarker() {
+export function addMarker(marker) {
   return {
-    type: types.ADD_MARKER
+    type: types.ADD_MARKER,
+    payload: marker
   };
 }

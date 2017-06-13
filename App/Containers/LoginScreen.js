@@ -20,10 +20,9 @@ class LoginScreen extends Component {
   }
 
   render() {
-    if (this.props.authState.user != null) {
+    if (this.props.authState.user) {
       return <LocationInputScreen {...this.props} />;
     }
-
     return (
       <View style={styles.container}>
         <FBLoginButton

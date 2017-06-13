@@ -8,6 +8,7 @@ import { Provider, connect } from "react-redux";
 import thunkMiddleware from "redux-thunk";
 import { createLogger } from "redux-logger";
 import reducer from "../reducers";
+import * as auth from "../actions/auth";
 
 import Firebase from "../Config/Firebase.js";
 
@@ -48,9 +49,10 @@ class App extends Component {
     Firebase.auth().onAuthStateChanged(user => {
       this.setState({ loaded: true });
 
-      // if (user) {
-      //   store.dispatch({ type: SIGN_IN_SUCCESS, payload: user });
-      // }
+      if (user) {
+        store.dispatch(auth.userAlreadySigned(user));
+        // store.dispatch({ type: SIGN_IN_SUCCESS, payload: user });
+      }
     });
   }
 

@@ -7,7 +7,11 @@ import RoundedButton from "../Components/RoundedButton.js";
 
 class LocationInputScreen extends Component {
   addMarker() {
-    this.props.fetchMarkers();
+    this.props.addMarker();
+  }
+
+  logout() {
+    this.props.signOutUser();
   }
 
   render() {
@@ -22,9 +26,15 @@ class LocationInputScreen extends Component {
           onChangeText={text => console.log(text)}
         />
         <RoundedButton
-          text="SEND"
+          text="Add Marker"
           onPress={() => {
             this.addMarker();
+          }}
+        />
+        <RoundedButton
+          text="Logout"
+          onPress={() => {
+            this.logout();
           }}
         />
       </View>

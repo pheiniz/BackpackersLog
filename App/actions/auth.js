@@ -26,6 +26,11 @@ export const signInUser = accessTokenData => dispatch => {
     });
 };
 
+export const userAlreadySigned = user => ({
+  type: types.SIGN_IN_SUCCESS,
+  payload: user
+});
+
 export const clearState = () => ({ type: types.SET_INITIAL_STATE });
 
 export const signOutUser = () => dispatch => {
