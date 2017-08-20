@@ -6,10 +6,6 @@ import MapComponent from "../Components/MapComponent.js";
 import RoundedButton from "../Components/RoundedButton.js";
 
 class LocationInputScreen extends Component {
-  addMarker() {
-    this.props.addMarker();
-  }
-
   logout() {
     this.props.signOutUser();
   }
@@ -17,18 +13,21 @@ class LocationInputScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <MapComponent />
+        <MapComponent ref="map" {...this.props} />
         <TextInput
+          ref="markerTextInput"
           style={styles.textInput}
           placeholder="Been there"
           returnKeyType="search"
           enablesReturnKeyAutomatically={true}
-          onChangeText={text => console.log(text)}
         />
         <RoundedButton
           text="Add Marker"
           onPress={() => {
-            this.addMarker();
+            var text = this.refs.markerTextInput._lastNativeText
+              ? this.refs.markerTextInput._lastNativeText
+              : "";
+            this.refs.map.addMarker(text);
           }}
         />
         <RoundedButton
@@ -44,7 +43,7 @@ class LocationInputScreen extends Component {
 
 function mapStateToProps(state) {
   return {
-    savedMarkers: state.savedMarkers
+    savedMarkers: state.markerState
   };
 }
 

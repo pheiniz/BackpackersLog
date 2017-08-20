@@ -3,7 +3,9 @@ import * as types from "./types";
 import Firebase from "../Config/Firebase.js";
 
 export const signInUser = accessTokenData => dispatch => {
-  dispatch({ type: types.SIGN_IN_REQUEST });
+  dispatch({
+    type: types.SIGN_IN_REQUEST
+  });
 
   const provider = Firebase.auth.FacebookAuthProvider;
   const credential = provider.credential(accessTokenData.accessToken);
@@ -11,7 +13,10 @@ export const signInUser = accessTokenData => dispatch => {
   Firebase.auth()
     .signInWithCredential(credential)
     .then(user => {
-      dispatch({ type: types.SIGN_IN_SUCCESS, payload: user });
+      dispatch({
+        type: types.SIGN_IN_SUCCESS,
+        payload: user
+      });
       alert(types.SIGN_IN_SUCCESS);
       // dispatch(reset("signin"));
       //
@@ -31,10 +36,13 @@ export const userAlreadySigned = user => ({
   payload: user
 });
 
-export const clearState = () => ({ type: types.SET_INITIAL_STATE });
+export const clearState = () => ({
+  type: types.SET_INITIAL_STATE
+});
 
 export const signOutUser = () => dispatch => {
-  dispatch({ type: types.SET_INITIAL_STATE });
-
+  dispatch({
+    type: types.SET_INITIAL_STATE
+  });
   Firebase.auth().signOut();
 };

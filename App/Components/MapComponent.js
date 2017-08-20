@@ -11,6 +11,10 @@ import {
   Switch,
   Dimensions
 } from "react-native";
+import { connect } from "react-redux";
+import Marker from "../Objects/marker.js";
+
+import Firebase from "../Config/Firebase.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -37,10 +41,39 @@ class MapComponent extends Component {
       markers: []
     };
 
+    var marker = new Marker("123", "!", "321", 123, 123);
+    alert(marker.name);
+
+    this.markerRef = Firebase.database().ref();
+
     this.onMapPress = this.onMapPress.bind(this);
   }
 
-  getPlaceForCoordinates(region) {
+  componentDidMount() {
+    this.listenForMarkers(this.markerRef);
+  }
+
+  listenForMarkers(markerRef) {
+    markerRef.on("value", snap => {
+      // get children as an array
+      var markers = [];
+      snap.forEach(marker => {
+        markers.push({
+          latitude: marker.val().latitude,
+          longitude: marker.val().longitude,
+          key: marker.key
+        });
+      });
+
+      this.setState({ markers: markers });
+
+      // this.setState({
+      //   dataSource: this.state.dataSource.cloneWithRows(items)
+      // });
+    });
+  }
+
+  getPlaceForCoordinates() {
     var coords = {
       lat: this.state.region.latitude,
       lng: this.state.region.longitude
@@ -48,9 +81,10 @@ class MapComponent extends Component {
 
     let ret = Geocoder.geocodePosition(coords)
       .then(res => {
-        var locality = res["0"].locality == null
-          ? res["0"].country
-          : res["0"].locality + "\n" + res["0"].country;
+        var locality =
+          res["0"].locality == null
+            ? res["0"].country
+            : res["0"].locality + "\n" + res["0"].country;
         this.setState({ place: locality });
       })
       .catch(err => console.log(err));
@@ -66,10 +100,44 @@ class MapComponent extends Component {
       markers: [
         ...this.state.markers,
         {
-          coordinate: e.nativeEvent.coordinate,
+          // coordinate: e.nativeEvent.coordinate,
+          latitude: e.nativeEvent.coordinate.latitude,
+          longitude: e.nativeEvent.coordinate.longitude,
           key: `foo${id++}`
         }
       ]
+    });
+    this.markerRef.push({
+      latitude: e.nativeEvent.coordinate.latitude,
+      longitude: e.nativeEvent.coordinate.longitude,
+      key: `foo${id++}`
+    });
+  }
+
+  addMarker(markerText) {
+    var coords = {
+      latitude: this.state.region.latitude,
+      longitude: this.state.region.longitude
+    };
+
+    var marker = {
+      markerId: "invalidID",
+      name: "",
+      text: markerText,
+      latitude: this.state.region.latitude,
+      longitude: this.state.region.longitude
+    };
+
+    //new Marker(afads, adsfasd, adfasd) verwenden
+
+    this.props.uploadMarker(marker);
+    alert(markerText);
+    this.markerRef.push({
+      markerId: "invalidID",
+      name: "",
+      markerText: markerText,
+      latitude: this.state.region.latitude,
+      longitude: this.state.region.longitude
     });
   }
 
@@ -93,7 +161,10 @@ class MapComponent extends Component {
             <MapView.Marker
               title={marker.key}
               key={marker.key}
-              coordinate={marker.coordinate}
+              coordinate={{
+                latitude: marker.latitude,
+                longitude: marker.longitude
+              }}
             />
           )}
         </MapView>
@@ -109,6 +180,13 @@ class MapComponent extends Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    markerState: state.markerState
+  };
+}
+
+// export default connect(mapStateToProps)(MapComponent);
 export default MapComponent;
 
 const styles = StyleSheet.create({
@@ -126,7 +204,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 20,
     marginTop: 20,
-    width: 200
+    width: 300
   },
   place: {
     textAlign: "center"

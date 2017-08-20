@@ -1,21 +1,22 @@
 import * as types from "./types";
 
-// export function setSearchedRecipes({ recipes }) {
-//   return {
-//     type: types.SAVE_MARKER,
-//     recipes
-//   };
-// }
-
 export function fetchMarkers() {
   return (dispatch, getState) => {
     console.log(getState());
   };
 }
 
-export function addMarker(marker) {
-  return {
-    type: types.ADD_MARKER,
+// export function uploadMarker(marker)
+export const uploadMarker = marker => dispatch => {
+  dispatch({
+    type: types.UPLOAD_MARKER_STARTED
+  });
+
+  // TODO Firebase logic
+  // alert("upload");
+
+  dispatch({
+    type: types.UPLOAD_MARKER_SUCCESS,
     payload: marker
-  };
-}
+  });
+};

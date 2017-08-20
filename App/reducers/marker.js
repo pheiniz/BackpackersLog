@@ -2,17 +2,18 @@ import createReducer from "./createReducer";
 import * as types from "../actions/types";
 
 const initialState = {
-  markers: []
+  markerId: "invalidID",
+  name: "",
+  text: "",
+  lat: 0,
+  lng: 0 //irgendwas falsch hier
 };
 
-export const savedMarkers = createReducer(
+export const markerState = createReducer(
   {},
   {
     [types.ADD_MARKER](state = initialState, action) {
-      return {
-        ...state,
-        markers: [...state.markers, action.payload]
-      };
+      return Object.assign({}, state, action.payload);
     }
   }
 );

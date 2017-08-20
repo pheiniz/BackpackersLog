@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import * as markersReducer from "./markers";
+import * as markersReducer from "./marker";
 import * as userReducers from "./user";
 import * as authReducers from "./auth";
 
