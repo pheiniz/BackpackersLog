@@ -1,7 +1,7 @@
 class Marker {
   create(id, name, text, lat, lng) {
     this.id = id;
-    this.name = "name";
+    this.name = name;
     this.text = text;
     this.lat = lat;
     this.lng = lng;

@@ -7,26 +7,17 @@ const initialState = {
   user: null
 };
 
-export const authState = createReducer(
-  {},
-  {
-    [types.SIGN_IN_REQUEST](state = initialState, action) {
-      return Object.assign({}, state, {
-        loading: true
-      });
-    },
-    [types.SIGN_IN_SUCCESS](state = initialState, action) {
-      return Object.assign({}, state, {
-        user: action.payload
-      });
-    },
-    [types.SIGN_IN_FAILURE](state = initialState, action) {
-      return Object.assign({}, state, {
-        error: action.payload
-      });
-    },
-    [types.SET_INITIAL_STATE](state = initialState, action) {
-      return initialState;
-    }
+export const authState = createReducer(initialState, {
+  [types.SIGN_IN_REQUEST](state = initialState, action) {
+    return Object.assign({}, state, {loading: true});
+  },
+  [types.SIGN_IN_SUCCESS](state = initialState, action) {
+    return Object.assign({}, state, {user: action.payload});
+  },
+  [types.SIGN_IN_FAILURE](state = initialState, action) {
+    return Object.assign({}, state, {error: action.payload});
+  },
+  [types.SET_INITIAL_STATE](state = initialState, action) {
+    return initialState;
   }
-);
+});

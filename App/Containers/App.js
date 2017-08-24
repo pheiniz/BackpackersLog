@@ -1,12 +1,12 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import AppContainer from "./AppContainer.js";
 import Map from "../Components/MapComponent.js";
 import Spinner from "../Components/Spinner.js";
 
-import { createStore, applyMiddleware, compose } from "redux";
-import { Provider, connect } from "react-redux";
+import {createStore, applyMiddleware, compose} from "redux";
+import {Provider, connect} from "react-redux";
 import thunkMiddleware from "redux-thunk";
-import { createLogger } from "redux-logger";
+import {createLogger} from "redux-logger";
 import reducer from "../reducers";
 import * as auth from "../actions/auth";
 
@@ -17,12 +17,8 @@ const loggerMiddleware = createLogger({
 });
 
 function configureStore(initialState) {
-  const enhancer = compose(
-    applyMiddleware(
-      thunkMiddleware, // lets us dispatch() functions
-      loggerMiddleware
-    )
-  );
+  const enhancer = compose(applyMiddleware(thunkMiddleware, // lets us dispatch() functions
+      loggerMiddleware));
   return createStore(reducer, initialState, enhancer);
 }
 
@@ -42,24 +38,29 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { loaded: false };
+    this.state = {
+      loaded: false
+    };
   }
 
   componentWillMount() {
-    Firebase.auth().onAuthStateChanged(user => {
-      this.setState({ loaded: true });
+    Firebase
+      .auth()
+      .onAuthStateChanged(user => {
+        this.setState({loaded: true});
 
-      if (user) {
-        store.dispatch(auth.userAlreadySigned(user));
-        // store.dispatch({ type: SIGN_IN_SUCCESS, payload: user });
-      }
-    });
+        if (user) {
+          store.dispatch(auth.userAlreadySigned(user));
+        }
+      });
   }
 
   render() {
     return (
       <Provider store={store}>
-        {this.state.loaded ? <AppContainer /> : <Spinner />}
+        {this.state.loaded
+          ? <AppContainer/>
+          : <Spinner/>}
       </Provider>
     );
   }
