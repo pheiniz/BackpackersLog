@@ -14,7 +14,7 @@ class LocationInputScreen extends Component {
 
     this.markerRef = Firebase
       .database()
-      .ref();
+      .ref("markers");
   }
 
   componentDidMount() {
@@ -56,12 +56,22 @@ class LocationInputScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <TextInput
+          ref="tripTitle"
+          style={styles.textInput}
+          placeholder="Give your trip a name like 'Backpacking Asia' or 'Berlin in summer'"
+          returnKeyType="done"
+          blurOnSubmit={true}
+          multiline={true}
+          onSubmitEditing={event => alert('submit search')}
+          enablesReturnKeyAutomatically={true}/>
         <MapComponent style={styles.map} ref="map" {...this.props}/>
         <TextInput
           ref="markerTextInput"
           style={styles.textInput}
           placeholder="Been there"
-          returnKeyType="search"
+          multiline={true}
+          onEndEditing={event => alert('submit search')}
           enablesReturnKeyAutomatically={true}/>
         <RoundedButton
           text="Add Marker"
@@ -102,8 +112,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,155,0.7)"
   },
   textInput: {
-    height: 30,
-    marginHorizontal: 50,
+    height: 60,
     padding: 8,
     borderWidth: 0.5,
     borderRadius: 5,

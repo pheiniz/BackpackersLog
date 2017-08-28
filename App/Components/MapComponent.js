@@ -42,10 +42,6 @@ class MapComponent extends Component {
       markers: []
     };
 
-    this.markerRef = Firebase
-      .database()
-      .ref();
-
     this.onMapPress = this
       .onMapPress
       .bind(this);
@@ -103,13 +99,6 @@ class MapComponent extends Component {
         }
       ]
     });
-    this
-      .markerRef
-      .push({
-        latitude: e.nativeEvent.coordinate.latitude,
-        longitude: e.nativeEvent.coordinate.longitude,
-        key: `foo${id++}`
-      });
   }
 
   addMarker(markerText) {
@@ -164,7 +153,7 @@ class MapComponent extends Component {
             }}/>)}
           {< MapView.Polyline
           key = {
-            "xyz"
+            "xyz" //use route key here
           }
           coordinates = {
             this
