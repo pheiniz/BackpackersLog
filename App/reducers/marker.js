@@ -7,6 +7,6 @@ const initialState = {
 
 export const markerState = createReducer(initialState, {
   [types.ADD_MARKERS](state = initialState, action) {
-    return Object.assign({}, ...state, {markers: action.payload});
+    return Object.assign({}, state, {markers: action.payload});
   }
 });

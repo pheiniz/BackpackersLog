@@ -112,7 +112,8 @@ class MapComponent extends Component {
       name: "",
       text: markerText,
       latitude: this.state.region.latitude,
-      longitude: this.state.region.longitude
+      longitude: this.state.region.longitude,
+      initDate: Firebase.database.ServerValue.TIMESTAMP
     };
 
     // var marker = new Marker("123", "!", "321", 123, 123); alert(marker.name);

@@ -1,5 +1,13 @@
 import React, {Component} from "react";
-import {StyleSheet, Text, TextInput, View} from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback
+} from "react-native";
 import {connect} from "react-redux";
 
 import Firebase from "../Config/Firebase.js";
@@ -15,10 +23,21 @@ class LocationInputScreen extends Component {
     this.markerRef = Firebase
       .database()
       .ref("markers");
+
+    this.tripRef = Firebase
+      .database()
+      .ref("trips");
+
+    this.state = {
+      tripName: this.props.tripState.activeTrip
+        ? this.props.tripState.activeTrip.name
+        : ""
+    };
   }
 
   componentDidMount() {
     this.listenForMarkers(this.markerRef);
+    this.listenForTrips(this.tripRef);
   }
 
   listenForMarkers(markerRef) {
@@ -38,13 +57,67 @@ class LocationInputScreen extends Component {
             .longitude,
           key: marker.key
         });
-        // } else {   console.log("key doublicate", markers.length) }
       });
 
       this
         .props
         .addMarkers(markers);
     });
+  }
+
+  listenForTrips(tripRef) {
+
+    tripRef.on("value", snap => {
+      // get children as an array
+      var trips = [];
+      snap.forEach(trip => {
+        trips.push({
+          name: trip
+            .val()
+            .name,
+          key: trip.key
+        });
+      });
+
+      this
+        .props
+        .addTrips(trips);
+
+      if (!this.props.tripState.activeTrip || this.props.tripState.trips.length == 0) {
+        this
+          .props
+          .changeActiveTrip(trips[0]);
+      }
+    });
+  }
+
+  addNewTrip(name) {
+    let trip = {
+      name: name,
+      initDate: Firebase.database.ServerValue.TIMESTAMP
+    }
+    this
+      .props
+      .uploadTrip(trip);
+  }
+
+  addNewMarker(text) {
+    if (this.props.tripState.activeTrip) {
+
+      let escapedText = text
+        ? text
+        : "";
+      this
+        .refs
+        .map
+        .getWrappedInstance()
+        .addMarker(escapedText);
+
+    } else {
+      alert("!!!")
+      this.refs.tripTitle.value = "!!!";
+
+    }
   }
 
   logout() {
@@ -55,48 +128,48 @@ class LocationInputScreen extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <TextInput
-          ref="tripTitle"
-          style={styles.textInput}
-          placeholder="Give your trip a name like 'Backpacking Asia' or 'Berlin in summer'"
-          returnKeyType="done"
-          blurOnSubmit={true}
-          multiline={true}
-          onSubmitEditing={event => alert('submit search')}
-          enablesReturnKeyAutomatically={true}/>
-        <MapComponent style={styles.map} ref="map" {...this.props}/>
-        <TextInput
-          ref="markerTextInput"
-          style={styles.textInput}
-          placeholder="Been there"
-          multiline={true}
-          onEndEditing={event => alert('submit search')}
-          enablesReturnKeyAutomatically={true}/>
-        <RoundedButton
-          text="Add Marker"
-          onPress={() => {
-          var text = this.refs.markerTextInput._lastNativeText
-            ? this.refs.markerTextInput._lastNativeText
-            : "";
-          this
-            .refs
-            .map
-            .getWrappedInstance()
-            .addMarker(text);
-        }}/>
-        <RoundedButton
-          text="Logout"
-          onPress={() => {
-          this.logout();
-        }}/>
-      </View>
+
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
+            <TextInput
+              ref="tripTitle"
+              style={styles.textInput}
+              onChangeText={(text) => this.setState({tripName: text})}
+              value={this.state.tripName}
+              placeholder="Give your trip a name like 'Backpacking Asia' or 'Berlin in summer'"
+              returnKeyType="done"
+              blurOnSubmit={true}
+              multiline={true}
+              onSubmitEditing={event => this.addNewTrip(event.nativeEvent.text)}
+              enablesReturnKeyAutomatically={true}/>
+            <MapComponent style={styles.map} ref="map" {...this.props}/>
+            <TextInput
+              ref="markerTextInput"
+              style={styles.textInput}
+              placeholder="Been there"
+              multiline={true}
+              enablesReturnKeyAutomatically={true}/>
+            <RoundedButton
+              text="Add Marker"
+              onPress={() => {
+              this.addNewMarker(this.refs.markerTextInput._lastNativeText)
+            }}/>
+            <RoundedButton
+              text="Logout"
+              onPress={() => {
+              this.logout();
+            }}/>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+
     );
   }
 }
 
 function mapStateToProps(state) {
-  return {markerState: state.markerState};
+  return {markerState: state.markerState, tripState: state.tripState};
 }
 
 function mapDispatchToProps(dispatch) {
