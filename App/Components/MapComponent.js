@@ -41,10 +41,6 @@ class MapComponent extends Component {
       polylines: [],
       markers: []
     };
-
-    this.onMapPress = this
-      .onMapPress
-      .bind(this);
   }
 
   componentDidMount() {
@@ -88,28 +84,16 @@ class MapComponent extends Component {
     this.getPlaceForCoordinates(region);
   }
 
-  onMapPress(e) {
-    this.setState({
-      markers: [
-        ...this.state.markers, {
-          // coordinate: e.nativeEvent.coordinate,
-          latitude: e.nativeEvent.coordinate.latitude,
-          longitude: e.nativeEvent.coordinate.longitude,
-          key: `foo${id++}`
-        }
-      ]
-    });
-  }
-
-  addMarker(markerText) {
+  addMarker(date, markerText) {
     var coords = {
       latitude: this.state.region.latitude,
       longitude: this.state.region.longitude
     };
-
+    alert(date)
     var marker = {
       markerId: "invalidID",
       name: "",
+      date: date,
       text: markerText,
       latitude: this.state.region.latitude,
       longitude: this.state.region.longitude,
@@ -139,38 +123,68 @@ class MapComponent extends Component {
         }}
           showsUserLocation={true}
           showsMyLocationButton={true}
-          onPress={this.onMapPress}
           onRegionChangeComplete={region => this.onRegionChange(region)}>
+
           {this
             .props
-            .markerState
-            .markers
-            .map(marker => <MapView.Marker
-              title={marker.key}
-              key={marker.key}
-              coordinate={{
-              latitude: marker.latitude,
-              longitude: marker.longitude
-            }}/>)}
-          {< MapView.Polyline
-          key = {
-            "xyz" //use route key here
-          }
-          coordinates = {
-            this
-              .props
-              .markerState
-              .markers
-              .map((marker) => {
-                return {latitude: marker.latitude, longitude: marker.longitude}
-              })
-          }
-          strokeColor = "#000"
-          fillColor = "rgba(255,0,0,0.5)"
-          strokeWidth = {
-            5
-          }
-          />}
+            .tripState
+            .trips
+            .map(trip => {
+
+              return Object
+                .keys(trip.markers)
+                .map((key) => {
+                  let marker = trip.markers[key]
+
+                  return < MapView.Marker
+                  title = {
+                    key
+                  }
+                  key = {
+                    key
+                  }
+                  coordinate = {{
+                    latitude: marker.latitude,
+                    longitude: marker.longitude
+                  }}
+                  onPress = {
+                    (event) => alert(marker.text)
+                  }
+                  />
+                })
+            })}
+          {this
+            .props
+            .tripState
+            .trips
+            .map(trip => {
+
+              let activeTripKey = this.props.tripState.activeTrip
+                ? this.props.tripState.activeTrip.key
+                : 0
+
+              return < MapView.Polyline
+              key = {
+                trip.key
+              }
+              coordinates = {
+                Object
+                  .keys(trip.markers)
+                  .map((key) => {
+                    let marker = trip.markers[key]
+                    return {latitude: marker.latitude, longitude: marker.longitude}
+                  })
+              }
+              strokeColor = {
+                trip.key == activeTripKey
+                  ? "rgba(255,0,0,1)"
+                  : "rgba(0,0,0,0.5)"
+              }
+              fillColor = "rgba(255,0,130,0.5)"
+              strokeWidth = {
+                5
+              }
+              />})}
         </MapView>
         <View style={styles.bubble}>
           <Text style={styles.place}>
@@ -185,7 +199,7 @@ class MapComponent extends Component {
 }
 
 function mapStateToProps(state) {
-  return {markerState: state.markerState};
+  return {markerState: state.markerState, tripState: state.tripState};
 }
 
 export default connect(mapStateToProps, null, null, {withRef: true})(MapComponent);
@@ -195,7 +209,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#F5FCF0"
+    alignSelf: "stretch",
+    backgroundColor: "rgba(0,255,255,0.7)"
   },
   map: {
     position: 'absolute',

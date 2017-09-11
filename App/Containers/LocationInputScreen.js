@@ -6,7 +6,8 @@ import {
   View,
   KeyboardAvoidingView,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Dimensions
 } from "react-native";
 import {connect} from "react-redux";
 
@@ -15,14 +16,14 @@ import Firebase from "../Config/Firebase.js";
 import MapComponent from "../Components/MapComponent.js";
 import RoundedButton from "../Components/RoundedButton.js";
 
+import DatePickerComponent from "../Components/DatePickerComponent.js";
+
 class LocationInputScreen extends Component {
 
   constructor(props) {
     super(props);
 
-    this.markerRef = Firebase
-      .database()
-      .ref("markers");
+    // this.markerRef = Firebase   .database()   .ref("markers");
 
     this.tripRef = Firebase
       .database()
@@ -36,33 +37,8 @@ class LocationInputScreen extends Component {
   }
 
   componentDidMount() {
-    this.listenForMarkers(this.markerRef);
+    // this.listenForMarkers(this.markerRef);
     this.listenForTrips(this.tripRef);
-  }
-
-  listenForMarkers(markerRef) {
-
-    markerRef.on("value", snap => {
-      // get children as an array
-      var markers = [];
-      snap.forEach(marker => {
-        // if (this.props.markerState.markers.filter(x=>x.key === marker.key).length ==
-        // 0){
-        markers.push({
-          latitude: marker
-            .val()
-            .latitude,
-          longitude: marker
-            .val()
-            .longitude,
-          key: marker.key
-        });
-      });
-
-      this
-        .props
-        .addMarkers(markers);
-    });
   }
 
   listenForTrips(tripRef) {
@@ -70,12 +46,16 @@ class LocationInputScreen extends Component {
     tripRef.on("value", snap => {
       // get children as an array
       var trips = [];
+
       snap.forEach(trip => {
         trips.push({
+          key: trip.key,
           name: trip
             .val()
             .name,
-          key: trip.key
+          markers: trip
+            .val()
+            .markers || []
         });
       });
 
@@ -83,11 +63,18 @@ class LocationInputScreen extends Component {
         .props
         .addTrips(trips);
 
-      if (!this.props.tripState.activeTrip || this.props.tripState.trips.length == 0) {
-        this
-          .props
-          .changeActiveTrip(trips[0]);
-      }
+      // if (!this.props.tripState.activeTrip || this.props.tripState.trips.length ==
+      // 0) {
+      var randomTripIndex = Math.floor(Math.random() * this.props.tripState.trips.length)
+      this
+        .props
+        .changeActiveTrip(trips[randomTripIndex]);
+      // }
+
+      this
+        .props
+        .addMarkers(this.props.tripState.activeTrip.markers);
+
     });
   }
 
@@ -101,7 +88,7 @@ class LocationInputScreen extends Component {
       .uploadTrip(trip);
   }
 
-  addNewMarker(text) {
+  addNewMarker(date, text) {
     if (this.props.tripState.activeTrip) {
 
       let escapedText = text
@@ -111,7 +98,7 @@ class LocationInputScreen extends Component {
         .refs
         .map
         .getWrappedInstance()
-        .addMarker(escapedText);
+        .addMarker(date, escapedText);
 
     } else {
       alert("!!!")
@@ -144,22 +131,25 @@ class LocationInputScreen extends Component {
               onSubmitEditing={event => this.addNewTrip(event.nativeEvent.text)}
               enablesReturnKeyAutomatically={true}/>
             <MapComponent style={styles.map} ref="map" {...this.props}/>
-            <TextInput
-              ref="markerTextInput"
-              style={styles.textInput}
-              placeholder="Been there"
-              multiline={true}
-              enablesReturnKeyAutomatically={true}/>
-            <RoundedButton
-              text="Add Marker"
-              onPress={() => {
-              this.addNewMarker(this.refs.markerTextInput._lastNativeText)
-            }}/>
-            <RoundedButton
-              text="Logout"
-              onPress={() => {
-              this.logout();
-            }}/>
+            <View style={styles.bottomInputView}>
+              <DatePickerComponent ref="datePicker"/>
+              <TextInput
+                ref="markerTextInput"
+                style={styles.textInput}
+                placeholder="Been there"
+                multiline={true}
+                enablesReturnKeyAutomatically={true}/>
+              <RoundedButton
+                text="Add Marker"
+                onPress={() => {
+                this.addNewMarker(this.refs.datePicker.state.date.valueOf(), this.refs.markerTextInput._lastNativeText)
+              }}/>
+              <RoundedButton
+                text="Logout"
+                onPress={() => {
+                this.logout();
+              }}/>
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -169,7 +159,7 @@ class LocationInputScreen extends Component {
 }
 
 function mapStateToProps(state) {
-  return {markerState: state.markerState, tripState: state.tripState};
+  return {tripState: state.tripState};
 }
 
 function mapDispatchToProps(dispatch) {
@@ -182,20 +172,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "rgba(255,255,155,0.7)"
+    backgroundColor: "rgba(255,0,155,0.7)"
+  },
+  bottomInputView: {
+    flex: 1,
+    flexDirection: "column",
+    width: Dimensions
+      .get('window')
+      .width,
+    alignItems: "center",
+    backgroundColor: "rgba(255,0,155,0.7)"
   },
   textInput: {
     height: 60,
     padding: 8,
     borderWidth: 0.5,
     borderRadius: 5,
-    backgroundColor: "rgba(255,255,255,0.7)"
+    backgroundColor: "rgba(255,255,0,0.7)"
   },
   map: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
+    width: 500
   }
 });
