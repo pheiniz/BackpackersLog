@@ -1,8 +1,13 @@
 import * as types from "./types";
 import Firebase from "../Config/Firebase.js";
 
-export const uploadTrip = trip => (dispatch, getState) => {
+export const uploadTrip = name => (dispatch, getState) => {
   dispatch({type: types.UPLOAD_TRIP_STARTED});
+
+  let trip = {
+    name: name,
+    initDate: Firebase.database.ServerValue.TIMESTAMP
+  }
 
   Firebase
     .database()

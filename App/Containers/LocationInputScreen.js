@@ -17,27 +17,19 @@ import MapComponent from "../Components/MapComponent.js";
 import RoundedButton from "../Components/RoundedButton.js";
 
 import DatePickerComponent from "../Components/DatePickerComponent.js";
+import TripSelectionComponent from "../Components/TripSelectionComponent.js";
 
 class LocationInputScreen extends Component {
 
   constructor(props) {
     super(props);
 
-    // this.markerRef = Firebase   .database()   .ref("markers");
-
     this.tripRef = Firebase
       .database()
       .ref("trips");
-
-    this.state = {
-      tripName: this.props.tripState.activeTrip
-        ? this.props.tripState.activeTrip.name
-        : ""
-    };
   }
 
   componentDidMount() {
-    // this.listenForMarkers(this.markerRef);
     this.listenForTrips(this.tripRef);
   }
 
@@ -69,23 +61,13 @@ class LocationInputScreen extends Component {
       this
         .props
         .changeActiveTrip(trips[randomTripIndex]);
-      // }
+      //}
 
       this
         .props
         .addMarkers(this.props.tripState.activeTrip.markers);
 
     });
-  }
-
-  addNewTrip(name) {
-    let trip = {
-      name: name,
-      initDate: Firebase.database.ServerValue.TIMESTAMP
-    }
-    this
-      .props
-      .uploadTrip(trip);
   }
 
   addNewMarker(date, text) {
@@ -114,22 +96,13 @@ class LocationInputScreen extends Component {
   }
 
   render() {
+
     return (
 
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
-            <TextInput
-              ref="tripTitle"
-              style={styles.textInput}
-              onChangeText={(text) => this.setState({tripName: text})}
-              value={this.state.tripName}
-              placeholder="Give your trip a name like 'Backpacking Asia' or 'Berlin in summer'"
-              returnKeyType="done"
-              blurOnSubmit={true}
-              multiline={true}
-              onSubmitEditing={event => this.addNewTrip(event.nativeEvent.text)}
-              enablesReturnKeyAutomatically={true}/>
+            <TripSelectionComponent {...this.props}/>
             <MapComponent style={styles.map} ref="map" {...this.props}/>
             <View style={styles.bottomInputView}>
               <DatePickerComponent ref="datePicker"/>
@@ -160,10 +133,6 @@ class LocationInputScreen extends Component {
 
 function mapStateToProps(state) {
   return {tripState: state.tripState};
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(ActionCreators, dispatch);
 }
 
 export default connect(mapStateToProps)(LocationInputScreen);
@@ -197,5 +166,10 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     width: 500
+  },
+  tripDropDown: {
+    flex: 1,
+    top: 32,
+    height: 20
   }
 });
